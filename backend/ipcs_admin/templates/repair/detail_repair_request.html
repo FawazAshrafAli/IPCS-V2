@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block page-heading %}
+<li class="nav-item">
+    <a class="nav-link ps-0" id="home-tab" data-bs-toggle="link" href="{% url 'repair_requests' %}" role="link" aria-controls="overview" aria-selected="true">Repair Requests</a>
+  </li>
+<li class="nav-item">
+    <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="{% url 'repair_request' repair_request.id %}" role="tab" aria-controls="overview" aria-selected="true">Repair Request - {{repair_request.customer_name}}</a>
+  </li>
+{% endblock page-heading %}
+{% block blue-btn %}
+<div class="d-flex align-items-center">
+    <div class="btn-wrapper d-flex me-0 ">
+        <button class="btn btn-primary text-white" id="start_toggle_btn">Start Repair</button>
+    </div>
+    <div>
+        <button class="btn btn-danger" id="delete-btn" title="Delete" data-bs-toggle="modal" data-bs-target="#confirm-deletion-modal">Delete</button>
+    </div>  
+</div>
+{% endblock blue-btn %} 
+{% block content %}
+<!-- Messages -->
+<div id="message-div">
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <p {% if message.tags %} class="{{message.tags}}" {% endif %}>{{message}}</p>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+<!-- Table -->
+<div class="row px-2">
+  <div class="col grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Repair ID: {{repair_request.pk}}</h4>
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <tr>
+                    <th>Application Date/Time</th>
+                    <td>:</td>
+                    <td>{{repair_request.application_datetime}}</td>
+                </tr>
+                <tr>
+                    <th>Customer Name</th>
+                    <td>:</td>
+                    <td>{{repair_request.customer_name}}</td>
+                </tr>                
+                <tr>
+                    <th>Email ID</th>
+                    <td>:</td>
+                    <td>{{repair_request.email_id}}</td>
+                </tr>
+                <tr>
+                    <th>Contact Number</th>
+                    <td>:</td>
+                    <td>{{repair_request.contact_number}}</td>
+                </tr>
+                <tr>
+                    <th>Alternative Number</th>
+                    <td>:</td>
+                    {% if repair_request.alternative_number %}
+                    <td>{{repair_request.alternative_number}}</td>
+                    {% else %}
+                    <td>None</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <th>Item Name</th>
+                    <td>:</td>
+                    <td>{{repair_request.product}}</td>
+                </tr>                                
+                <tr>
+                    <th>Serial Number</th>
+                    <td>:</td>
+                    <td>{{repair_request.serial_number}}</td>
+                </tr>
+                <tr>
+                    <th>Model Number</th>
+                    <td>:</td>
+                    <td>{{repair_request.model_number}}</td>
+                </tr>
+                <tr>
+                    <th>Item Description</th>
+                    <td>:</td>
+                    <td>{{repair_request.item_description}}</td>
+                </tr>
+                <tr>
+                    <th>Address of Customer</th>
+                    <td>:</td>
+                    <td>{{repair_request.address_customer}}</td>
+                </tr>
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- confirm start box -->
+<div class="position-absolute border shadow shadow-danger px-3 pt-3 bg-light" id="confirm_start" style="display: none; left: 50%; top: 50%; transform: translate(-50%, -50%); width:320px">
+    <h4 class="text-danger text-uppercase">Starting repair..</h4>
+    <hr/>
+    <div id="assurance-section">        
+        <h6>Are your sure?</h6>
+        <div class="d-flex justify-content-between mt-4">        
+          <a class="btn btn-info text-light " id="start-repair-btn" href="{% url 'start_repair' repair_request.pk %}" style="width: 75px;" onclick="loadingAnimation()">Start</a>
+          <button type="button" class="btn btn-primary text-light" id="close_start_btn" data-dismiss="modal" style="width: 75px;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="confirm-deletion-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 text-start" id="exampleModalLabel"><span class="text-danger">Deleting </span>Repair Request '<span class="deleting-warranty-application">{{repair_request.id}} ({{repair_request.customer_name}})</span>'. . .</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h4>Are you sure?</h4>
+        </div>
+        <div class="modal-footer d-flex justify-content-between align-items-center">
+            <a href="{% url 'hard_delete_repair_request' repair_request.pk %}" class="btn btn-danger" style="width: 75px;">Confirm</a>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="width: 75px;">Cancel</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script>
+    // start function
+    var startToggleBtn = document.getElementById('start_toggle_btn');
+
+    startToggleBtn.addEventListener("click", function(){
+        document.getElementById('confirm_start').style.display = "block";        
+    });
+
+    // close start
+    var closeStartBtn = document.getElementById('close_start_btn');
+
+    closeStartBtn.addEventListener("click", function(){
+      document.getElementById('confirm_start').style.display = "none";
+    });
+</script>
+{% endblock content %}

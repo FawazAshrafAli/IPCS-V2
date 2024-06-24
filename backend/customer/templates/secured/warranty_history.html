@@ -1,0 +1,127 @@
+{% extends "customer_base.html" %}
+{% block page-heading %}
+<li class="nav-item">
+  <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="{% url 'warranty_history' %}" role="tab" aria-controls="overview" aria-selected="true">Warranty History</a>
+</li>
+{% endblock page-heading %}
+{% block content %}
+<!-- Messages -->
+<div id="message-div">
+  {% if messages %}
+      <ul class="messages">
+          {% for message in messages %}
+              <p {% if message.tags %} class="{{message.tags}}" {% endif %}>{{message}}</p>
+          {% endfor %}
+      </ul>
+  {% endif %}
+</div>
+<!-- Table -->
+<div class="col-lg-12 grid-margin stretch-card px-2">
+  <div class="card">
+    <div class="card-body">
+        {% if not rejected_warranties and not finished_warranties and not accepted_warranties and not warranty_applications %}
+        <div class="text-center text-danger text-uppercase">
+            <h5>No Warranty History</h5>
+        </div>
+        {% endif %}
+
+        <!-- Warranty Application -->
+        {% if warranty_applications %}
+        <div class="table-responsive">
+          <table class="table">
+              <thead>
+                <tr class="text-uppercase text-primary">
+                    <th colspan="4">Warranty Applications:</th>
+                </tr>
+                  <tr>
+                      <th>Warranty ID</th>
+                      <th>Application Date</th>
+                      <th>Product</th>
+                      <th>Serial Number</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for warranty_application in warranty_applications %}
+                  <tr>
+                      <td>{{warranty_application.id}}</td>
+                      <td>{{warranty_application.application_datetime.date}}</td>
+                      <td>{{warranty_application.product}}</td>
+                      <td>{{warranty_application.serial_number}}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+        </div>
+        {% endif %}
+        <!-- Warranty Application -->
+
+        <!-- Finished Warranty -->
+      {% if finished_warranties %}
+      <div class="table-responsive">
+        <table class="table">
+            <thead> 
+                <tr class="text-uppercase text-primary">
+                    <th colspan="4">Finished Warranties:</th>
+                </tr>               
+                <tr>
+                    <th>Warranty ID</th>
+                    <th>Application Date</th>
+                    <th>Finished Date</th>
+                    <th>Product</th>
+                    <th>Serial Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for finished_warranty in finished_warranties %}
+                <tr>
+                    <td>{{finished_warranty.id}}</td>
+                    <td>{{finished_warranty.application_datetime.date}}</td>
+                    <td>{{finished_warranty.finished_datetime.date}}</td>
+                    <td>{{finished_warranty.product}}</td>
+                    <td>{{finished_warranty.serial_number}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+      <br/>
+      {% endif %}
+      <!-- End Finished Warranty -->
+
+        <!-- Rejected Warranty -->
+        {% if rejected_warranties %}
+        <div class="table-responsive">
+          <table class="table">
+              <thead> 
+                  <tr class="text-uppercase text-primary">
+                      <th colspan="4">Rejected Warranties:</th>
+                  </tr>               
+                  <tr>
+                      <th>Warranty ID</th>
+                      <th>Application Date</th>
+                      <th>Rejected Date</th>
+                      <th>Product</th>
+                      <th>Serial Number</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for rejected_warranty in rejected_warranties %}
+                  <tr>
+                      <td>{{rejected_warranty.id}}</td>
+                      <td>{{rejected_warranty.application_datetime.date}}</td>
+                      <td>{{rejected_warranty.rejected_datetime.date}}</td>
+                      <td>{{rejected_warranty.product}}</td>
+                      <td>{{rejected_warranty.serial_number}}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+        </div>
+        <br/>
+        {% endif %}
+        <!-- End Rejected Warranty -->    
+
+    </div>
+  </div>
+</div>
+{% endblock content %}

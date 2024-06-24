@@ -1,0 +1,156 @@
+{% extends "customer_base.html" %}
+{% block page-heading %}
+<li class="nav-item">
+  <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="{% url 'repair_history' %}" role="tab" aria-controls="overview" aria-selected="true">Repair History</a>
+</li>
+{% endblock page-heading %}
+{% block content %}
+<!-- Messages -->
+<div id="message-div">
+  {% if messages %}
+      <ul class="messages">
+          {% for message in messages %}
+              <p {% if message.tags %} class="{{message.tags}}" {% endif %}>{{message}}</p>
+          {% endfor %}
+      </ul>
+  {% endif %}
+</div>
+<!-- Table -->
+<div class="col-lg-12 grid-margin stretch-card px-2">
+  <div class="card">
+    <div class="card-body">
+        {% if not repair_ready_to_dispatches and not completed_repairs and not started_repairs and not repair_requests %}
+        <div class="text-center text-danger text-uppercase">
+            <h5>No Repair History</h5>
+        </div>
+        {% endif %}
+        <!-- Repair Request -->
+        {% if repair_requests %}
+        <div class="table-responsive">
+          <table class="table table-sm">
+              <thead>
+                  <tr class="text-uppercase text-primary">
+                      <th colspan="4">Repair Requests</th>
+                  </tr>
+                  <tr>
+                      <th>Repair ID</th>
+                      <th class="text-center">Requested Date</th>
+                      <th class="text-center">Product</th>
+                      <th class="text-center">Serial Number</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for repair_request in repair_requests %}
+                  <tr>
+                    <td>{{repair_request.id}}</td>
+                    <td class="text-center">{{repair_request.application_datetime.date}}</td>
+                    <td class="text-center">{{repair_request.product}}</td>
+                    <td class="text-center">{{repair_request.serial_number}}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+        </div>
+        {% endif %}
+        <!-- End Repair Request -->
+
+        <!-- Started Repair -->
+        {% if started_repairs %}
+        <div class="table-responsive">
+          <table class="table table-sm">
+              <thead>
+                  <tr class="text-uppercase text-primary">
+                      <th colspan="4">Started Repairs</th>
+                  </tr>
+                  <tr>
+                      <th>Repair ID</th>
+                      <th class="text-center">Requested Date</th>
+                      <th class="text-center">Started Date</th>
+                      <th class="text-center">Product</th>
+                      <th class="text-center">Serial Number</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for started_repair in started_repairs %}
+                  <tr>
+                      <td>{{started_repair.id}}</td>
+                      <td class="text-center">{{started_repair.application_datetime.date}}</td>
+                      <td class="text-center">{{started_repair.started_datetime.date}}</td>
+                      <td class="text-center">{{started_repair.product}}</td>
+                      <td class="text-center">{{started_repair.serial_number}}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+        </div>
+        {% endif %}
+        <!-- End Started Repair -->
+
+        <!-- Completed Repair -->
+      {% if completed_repairs %}
+      <div class="table-responsive">
+        <table class="table table-sm">
+            <thead>
+                <tr class="text-uppercase text-primary">
+                    <th colspan="4">Completed Repairs</th>
+                </tr>
+                <tr>
+                    <th>Repair ID</th>
+                    <th class="text-center">Requested Date</th>
+                    <th class="text-center">Completed Date</th>
+                    <th class="text-center">Product</th>
+                    <th class="text-center">Serial Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for completed_repair in completed_repairs %}
+                <tr>
+                    <td>{{completed_repair.id}}</td>
+                    <td class="text-center">{{completed_repair.application_datetime.date}}</td>
+                    <td class="text-center">{{completed_repair.completion_datetime.date}}</td>
+                    <td class="text-center">{{completed_repair.product}}</td>
+                    <td class="text-center">{{completed_repair.serial_number}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+      {% endif %}
+      <!-- End Completed Repair -->
+
+      <!-- Repair Ready To Dispatch -->
+      {% if repair_ready_to_dispatches %}
+      <div class="table-responsive">
+        <table class="table table-sm">
+            <thead>
+                <tr class="text-uppercase text-primary">
+                    <th colspan="4">Repairs Ready To Dispatch</th>
+                </tr>
+                <tr>
+                    <th>Repair ID</th>
+                    <th class="text-center">Requested Date</th>
+                    <th class="text-center">Time of Ready To Dispatch</th>
+                    <th class="text-center">Product</th>
+                    <th class="text-center">Serial Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for repair_ready_to_dispatch in repair_ready_to_dispatches %}
+                <tr>
+                    <td>{{repair_ready_to_dispatch.id}}</td>
+                    <td class="text-center">{{repair_ready_to_dispatch.application_datetime.date}}</td>
+                    <td class="text-center">{{repair_ready_to_dispatch.dispatch_ready_datetime.date}}</td>
+                    <td class="text-center">{{repair_ready_to_dispatch.product}}</td>
+                    <td class="text-center">{{repair_ready_to_dispatch.serial_number}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+      {% endif %}
+      <!-- End Repair Ready To Dispatch -->
+
+    </div>
+  </div>
+</div>
+{% endblock content %}

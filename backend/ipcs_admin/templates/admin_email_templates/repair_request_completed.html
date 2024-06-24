@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repair Request Completed</title>
+</head>
+
+<body style="font-family: sans-serif; padding: 20px; background-color: #f4f4f4;">
+
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+
+        <h3 id="main-heading" style="text-align: center;">Repair Request Completed</h3>
+
+        <p>“Thank you for choosing us!" We're delighted to have been able to assist you! Your satisfaction is our 
+            priority, and we're here whenever you need us.
+            <br> <br>
+            Dear Sir / Madam,
+            <br><br>
+            We're pleased to inform you that your repair request has been successfully completed. Should you have 
+            any further questions or concerns, please don't hesitate to reach out. Thank you for choosing us for your 
+            repair needs.
+        </p>    
+
+        <h4 style="color: #333333;">Product Details:</h4>
+        <p>Application ID: {{ id }}</p>
+        <p>Product: {{ product }}</p>
+        <p>Serial Number: {{ serial_number }}</p>
+        {% if model_number %}
+        <p>Model Number: {{ model_number }}</p>
+        {% endif %}
+        {% if repair_description %}
+        <p>Repair Description: {{ repair_description }}</p>
+        {% endif %}
+        {% if remark %}
+        <p>Remark: {{ remark }}</p>
+        {% endif %}
+
+        <h4 style="color: #333333;">Customer Details:</h4>
+        
+        <p>Name: {{ customer_name }}</p>
+        <p>Email: {{ email }}</p>
+        <p>Contact Number: {{ contact_number }}</p>     
+        <p>Address: {{ address }}</p>              
+
+        <br>
+
+        <p>Warm regards,
+            <br>
+            IPCS Support.
+            <br>
+            Contact No: 8089016664 / 0484 4865413
+            <br>
+            Email - <a href="mailto:ipcshelpyou@gmail.com">ipcshelpyou@gmail.com</a>
+        </p>
+
+    </div>
+
+</body>
+
+</html>

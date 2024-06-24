@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warranty Request Submission</title>
+</head>
+
+<body style="font-family: sans-serif; padding: 20px; background-color: #f4f4f4;">
+
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+
+        <h3 id="main-heading" style="text-align: center;">Warranty Request Submission</h3>
+        <br>
+
+        <p>“Thank you for choosing us!" We're delighted to have been able to assist you! Your satisfaction is our 
+            priority, and we're here whenever you need us.            
+            <br> <br>
+            Dear Sir / Madam,
+            <br><br>
+            Your warranty request has been registered with ID: {{id}}, We’ll be in touch with you shortly to 
+            address your needs."
+        </p>    
+
+        <h4 style="color: #333333;">Product Details:</h4>
+        <p>Product: {{ product }}</p>
+        <p>Serial Number: {{ serial_number }}</p>
+        {% if model_number %}
+        <p>Model Number: {{ model_number }}</p>
+        {% endif %}
+        {% if billing_name %}
+        <p>Billing Name: {{ billing_name }}</p>
+        {% endif %}
+        {% if invoice_number %}
+        <p>Invoice Number: {{ invoice_number }}</p>
+        {% endif %}
+        {% if product_complain %}
+        <p>Product Complain: {{ product_complain }}</p>
+        {% endif %}    
+
+        <h4 style="color: #333333;">Customer Details:</h4>
+        
+        <p>Name: {{ customer_name }}</p>
+        <p>Email: {{ email }}</p>
+        <p>Contact Number: {{ contact_number }}</p>     
+        <p>Address: {{ address }}</p>              
+
+        <br>
+
+        <p>Warm regards,
+            <br><br>
+            IPCS Support.
+            <br><br>
+            Contact No: 8089016664 / 0484 4865413
+            <br><br>
+            Email - <a href="mailto:ipcshelpyou@gmail.com">ipcshelpyou@gmail.com</a>
+        </p>
+
+    </div>
+
+</body>
+
+</html>

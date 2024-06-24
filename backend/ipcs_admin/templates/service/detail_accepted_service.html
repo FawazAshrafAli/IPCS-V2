@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% block page-heading %}
+<li class="nav-item">
+  <a class="nav-link ps-0" id="home-tab" data-bs-toggle="link" href="{% url 'accepted_services' %}" role="link" aria-controls="overview" aria-selected="false">Accepted Services</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="{% url 'accepted_service' accepted_service.pk %}" role="tab" aria-controls="overview" aria-selected="true">Accepted Service</a>
+</li>
+{% endblock page-heading %}
+{% block blue-btn %}
+<div class="d-flex">
+  <div class="btn-wrapper d-flex me-0 ">
+    <button class="btn btn-info" id="delete_btn">Processing</button>    
+  </div>
+  <div>    
+    <button class="btn btn-success" id="complete_btn">Complete</button>
+  </div>
+  <div>
+    <button class="btn btn-danger" id="delete-btn" title="Delete" data-bs-toggle="modal" data-bs-target="#confirm-deletion-modal">Delete</button>
+  </div>
+</div>
+{% endblock blue-btn %} 
+{% block content %}
+<!-- Messages -->
+<div id="message-div">
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <p {% if message.tags %} class="{{message.tags}}" {% endif %}>{{message}}</p>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+<!-- Table -->
+<div class="row">
+  <div class="col grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Service ID: {{accepted_service.pk}}</h4>
+        <div class="table-responsive">
+            <table class="table table-sm">            
+              <tr>
+                <th>Application Date/Time</th>
+                <td>:</td>
+                <td>{{accepted_service.application_datetime}}</td>
+              </tr>
+              <tr>
+                <th>Accepted Date/Time</th>
+                <td>:</td>
+                <td>{{accepted_service.accepted_datetime}}</td>
+              </tr>
+              <tr>
+                  <th>Customer Name</th>
+                  <td>:</td>
+                  <td>{{accepted_service.customer_name}}</td>
+              </tr>                
+              <tr>
+                  <th>Email ID</th>
+                  <td>:</td>
+                  <td>{{accepted_service.email}}</td>
+              </tr>
+              <tr>
+                  <th>Contact Number</th>
+                  <td>:</td> 
+                  <td>{{accepted_service.contact_number}}</td>
+              </tr>
+              <tr>
+                  <th>Alternative Number</th>
+                  <td>:</td>
+                  {% if accepted_service.alternative_number %}
+                  <td>{{accepted_service.alternative_number}}</td>
+                  {% else %}
+                  <td>None</td>
+                  {% endif %}
+              </tr>
+              <tr>
+                  <th>Item Name</th>
+                  <td>:</td>
+                  <td>{{accepted_service.product}}</td>
+              </tr>                                
+              <tr>
+                  <th>Serial Number</th>
+                  <td>:</td>
+                  <td>{{accepted_service.serial_number}}</td>
+              </tr>
+              <tr>
+                <th>Model Number</th>
+                <td>:</td>
+                <td>
+                  {% if accepted_service.model_number %}
+                  {{accepted_service.model_number}}
+                  {% else %}
+                  None
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                  <th>Address of Customer</th>
+                  <td>:</td>
+                  <td>{{accepted_service.address_site}}</td>
+              </tr>
+              <tr>
+                  <th>Item Description</th>
+                  <td>:</td>
+                  <td>{{accepted_service.service_description}}</td>
+              </tr>
+              <tr>                
+                <th>Remark&nbsp;&nbsp;<a class="btn p-0" href="#remark_update" id="remark_toggle_btn" title="Update Remark"><i class="mdi mdi-lead-pencil" style="width: 20px;"></i></a></th>
+                <td>:</td>
+                <td>
+                  {% if accepted_service.remark %}
+                  {{accepted_service.remark}}
+                  {% else %}
+                  None
+                  {% endif %}
+                </td>
+              </tr>
+            </table>
+        </div>
+        <br>
+        <!-- remark update form -->
+        <form class="form" method="POST" id="remark_update" style="display:none">
+          {% csrf_token %}
+          <div class="form-group d-flex flex-column">
+              <label for="remark">Remark</label>
+              <textarea name="remark" id="remark" cols="30" rows="10">{{accepted_service.remark}}</textarea>
+          </div>
+          <div id="remark-assurance-section">
+            <div class="text-center">
+                <button class="btn btn-success" type="button" style="width:120px" id="remark-submit-btn" onclick="updateRemarkAndLoadAnimation()">Update Remark</button>
+                <button type="button" class="btn btn-primary" id="close_remark_btn" style="width:120px">Cancel</button>
+            </div>
+          </div>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- confirm deletion box -->
+<div class="position-absolute border shadow shadow-danger px-3 pt-3 bg-light" id="confirm_deletion" style="display: none; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+  <h4 class="text-danger">Moving accepted service back to service request..</h4>
+  <hr/>
+  <div id="assurance-section">
+    <h6>Are your sure?</h6>
+    <div class="d-flex justify-content-between mt-4">
+      <a class="btn btn-info text-light" href="{% url 'delete_accepted_service' accepted_service.pk %}" style="width: 75px;" onclick="loadingAnimation()">Move</a>
+      <button type="button" class="btn btn-primary text-light" id="close_deletion" data-dismiss="modal" style="width: 75px;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- confirm completion box -->
+<div class="position-absolute border shadow shadow-danger px-3 pt-3 bg-light" id="confirm_completion" style="display: none; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+  <h4 class="text-danger">Completing Service</h4>
+  <hr/>
+  <div id="completion-assurance-section">
+    <form id="service-completion-form" action="{% url 'complete_service' accepted_service.pk %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group d-flex flex-column">
+        <label for="remark" class="form-label">Remark (optional)</label>
+        <textarea name="remark" id="remark" cols="30" rows="10" placeholder="Remark if any"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="file" class="form-label">File (optional)</label>
+        <input type="file" name="file" class="form-control" id="file">
+      </div>
+        <div class="d-flex justify-content-between mt-4">
+        <button class="btn btn-success" type="button" onclick="completeServiceAndLoadAnimation()">Complete</button>
+        <button type="button" class="btn btn-primary text-light" id="close_completion" style="width: 75px;">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="confirm-deletion-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5 text-start" id="exampleModalLabel"><span class="text-danger">Deleting </span>Accepted Service Request '{{accepted_service.id}} ({{accepted_service.customer_name}})'. . .</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h4>Are you sure?</h4>
+      </div>
+      <div class="modal-footer d-flex justify-content-between align-items-center">
+          <a href="{% url 'hard_delete_accepted_service' accepted_service.pk %}" class="btn btn-danger" style="width: 75px;">Confirm</a>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="width: 75px;">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // update remark/deletion/completion visibility functions
+  var remarkToggleBtn = document.getElementById('remark_toggle_btn');
+  var deleteBtn = document.getElementById('delete_btn');
+  var completeBtn = document.getElementById('complete_btn');
+    
+    remarkToggleBtn.addEventListener("click", function(){
+      document.getElementById('remark_update').style.display = "block";     
+      document.getElementById('confirm_completion').style.display = "none";     
+      document.getElementById('confirm_deletion').style.display = "none";     
+    });
+    deleteBtn.addEventListener("click", function(){
+      document.getElementById('confirm_deletion').style.display = "block";     
+      document.getElementById('remark_update').style.display = "none";     
+      document.getElementById('confirm_completion').style.display = "none";     
+    });
+    completeBtn.addEventListener("click", function(){
+      document.getElementById('confirm_completion').style.display = "block";     
+      document.getElementById('remark_update').style.display = "none";     
+      document.getElementById('confirm_deletion').style.display = "none";     
+    });
+
+    // close remark/deletion/completion visibility function    
+    var closeRemarkBtn = document.getElementById('close_remark_btn');
+    var closeCompletion = document.getElementById('close_completion');
+    var closeDeletion = document.getElementById('close_deletion');
+        
+    closeRemarkBtn.addEventListener("click", function(){
+      document.getElementById('remark_update').style.display = "none";
+    });
+    closeCompletion.addEventListener("click", function(){      
+      document.getElementById('confirm_completion').style.display='none';
+    });
+    closeDeletion.addEventListener("click", function(){      
+      document.getElementById('confirm_deletion').style.display='none';
+    });          
+
+</script>
+{% endblock content %}

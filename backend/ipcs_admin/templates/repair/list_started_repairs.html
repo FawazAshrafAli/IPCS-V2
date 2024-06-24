@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block page-heading %}
+<li class="nav-item">
+  <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="{% url 'started_repairs' %}" role="tab" aria-controls="overview" aria-selected="true">Started Repairs</a>
+</li>
+{% endblock page-heading %}
+{% block content %}
+<!-- Table -->
+<div class="row px-2">
+  <div class="col grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <!-- Messages -->
+        <div id="message-div">
+          {% if messages %}
+              <ul class="messages">
+                  {% for message in messages %}
+                      <p {% if message.tags %} class="{{message.tags}}" {% endif %}>{{message}}</p>
+                  {% endfor %}
+              </ul>
+          {% endif %}
+        </div>
+        
+        {% if started_repairs %}
+        <div class="d-flex justify-content-between align-items-center">
+          <h4 class="text-uppercase">Started Repair Requests</h4>
+          <div class="dropdown">
+            <button class="btn btn-light btn-sm p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="mdi mdi-dots-vertical p-0 m-0"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item p-0 text-center" href="{% url 'started_repairs_to_excel' %}" style="font-size:12px">Export To Excel</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <tr>
+                  <th>No</th>
+                  <th>Repair ID</th>
+                  <th>Customer</th>
+                  <th>Date/Time</th>
+                  <th>Started Date/Time</th>
+                  <th>Item</th>
+                  <th>Serial</th>
+                </tr>
+              </tr>
+            </thead>
+            <tbody>
+              {% for started_repair in started_repairs %}
+              <tr id="link-table" onclick="window.location='{% url 'started_repair' started_repair.pk %}'">
+                <td>{{forloop.counter}}</td>
+                <td>{{started_repair.id}}</td>
+                <td>{{started_repair.customer_name}}</td>
+                <td>{{started_repair.application_datetime}}</td>
+                <td>{{started_repair.started_datetime}}</td>
+                <td>{{started_repair.product}}</td>
+                <td>{{started_repair.serial_number}}</td>
+              </tr>
+              {% endfor %}                            
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+            <div class="text-center text-danger text-uppercase">
+                <h5>No Started Repair</h5>
+            </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block page-heading %}
+<li class="nav-item">
+  <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="{% url 'warranty_applications' %}" role="tab" aria-controls="overview" aria-selected="true">Warranty Applications</a>
+</li>
+{% endblock page-heading %}
+{% block content %}
+<!-- Table -->
+<div class="row px-2">
+  <div class="col grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <!-- Messages -->
+        <div id="message-div">
+          {% if messages %}
+              <ul class="messages">
+                  {% for message in messages %}
+                      <p {% if message.tags %} class="{{message.tags}}" {% endif %}>{{message}}</p>
+                  {% endfor %}
+              </ul>
+          {% endif %}
+        </div>
+        
+        {% if applications %}
+        <div class="d-flex justify-content-between align-items-center">
+          <h4 class="card-title text-uppercase">Warranty Applications</h4>
+          <div class="dropdown">
+            <button class="btn btn-light btn-sm p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="mdi mdi-dots-vertical p-0 m-0"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item p-0 text-center" href="{% url 'warranty_applications_to_excel' %}" style="font-size:12px">Export To Excel</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Warranty ID</th>              
+                <th>Application Date/Time</th>
+                <th>Customer Name</th>
+                <th>Contact Number</th>                                              
+                <th>Serial Number</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for application in applications %}
+              <style>
+                #read-unread-{{application.pk}} {
+                  font-size: 20px;
+                  padding: 3px 5px 0px 5px;                  
+                }
+
+                {% if application.viewed %}
+                #read-unread-{{application.pk}}:hover {
+                  box-shadow: 0px 0px 5px #777;                  
+                }
+                {% endif %}
+              </style>
+              <tr id="link-table" data-warranty-id="{{application.pk}}" onclick="markAsViewedWarranty('{{application.pk}}'); window.location='{% url 'warranty_application' application.pk %}'; return false;">
+                <td>{{forloop.counter}}</td>
+                <td>{{application.id}}</td>
+                <td>{{application.application_datetime}}</td>
+                <td>{{application.customer_name}}</td>
+                <td>{{application.contact_number}}</td>
+                <td>{{application.serial_number}}</td>
+                <td>
+                  <i {% if application.viewed %} class="mdi mdi-email-open text-secondary" title="Viewed" {% else %} class="mdi mdi-email text-primary" title="Not Viewed" {% endif %} id="read-unread-{{application.pk}}" onclick="markUnreadPopUpWarranty(event, '{{application.pk}}')"></i>
+                </td>                
+              </tr>
+              {% endfor %}                            
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+            <div class="text-center text-danger text-uppercase">
+                <h5>No warranty application</h5>
+            </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- confirm unread box -->
+<div class="position-absolute border shadow shadow-danger px-3 pt-3 bg-light" id="confirm_unread_box" style="display: none; min-width: 360px; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+  <h4 class="text-danger">Marking warranty request '<span id="warranty-request-object"></span>' as 'Unread'.</h4>
+  <hr/>
+  <h6>Are your sure?</h6>
+  <div class="d-flex justify-content-between mt-4">
+    <button class="btn btn-info text-light" href="#" id="confirm-unread-btn" onclick="markUnreadWarranty(this.value)" style="width: 75px;">Yes</button>
+    <button type="button" class="btn btn-primary text-light" onclick="document.getElementById('confirm_unread_box').style.display='none'" data-dismiss="modal" style="width: 75px;">Cancel</button>
+  </div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block page-heading %}
+<li class="nav-item">
+  <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="{% url 'repair_requests' %}" role="tab" aria-controls="overview" aria-selected="true">Repair Requests</a>
+</li>
+{% endblock page-heading %}
+{% block content %}
+<!-- Table -->
+<div class="row px-2">
+  <div class="col grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <!-- Messages -->
+        <div id="message-div">
+          {% if messages %}
+              <ul class="messages">
+                  {% for message in messages %}
+                      <p {% if message.tags %} class="{{message.tags}}" {% endif %}>{{message}}</p>
+                  {% endfor %}
+              </ul>
+          {% endif %}
+        </div>
+        
+        {% if repair_requests %}
+        <div class="d-flex justify-content-between align-items-center">
+          <h4 class="card-title text-uppercase">Repair Requests</h4>
+          <div class="dropdown">
+            <button class="btn btn-light btn-sm p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="mdi mdi-dots-vertical p-0 m-0"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item p-0 text-center" href="{% url 'repair_requests_to_excel' %}" style="font-size:12px">Export To Excel</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Repair ID</th>
+                <th>Customer</th>
+                <th>Application Date/Time</th>
+                <th>Item</th>
+                <th>Serial</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for repair_request in repair_requests %}
+              <style>
+                #read-unread-{{repair_request.pk}} {
+                  font-size: 20px;
+                  padding: 3px 5px 0px 5px;                  
+                }
+
+                {% if repair_request.viewed %}
+                #read-unread-{{repair_request.pk}}:hover {
+                  box-shadow: 0px 0px 5px #777;                  
+                }
+                {% endif %}
+              </style>
+              <tr id="link-table" data-repair-id="{{repair_request.pk}}" onclick="markAsViewedRepair('{{repair_request.pk}}'); window.location='{% url 'repair_request' repair_request.id %}'; return false;">
+                  <td>{{forloop.counter}}</td>
+                  <td>{{repair_request.id}}</td>
+                  <td>{{repair_request.customer_name}}</td>
+                  <td>{{repair_request.application_datetime}}</td>
+                  <td>{{repair_request.product}}</td>
+                  <td>{{repair_request.serial_number}}</td>
+                  <td>
+                    <i {% if repair_request.viewed %} class="mdi mdi-email-open text-secondary" title="Viewed" {% else %} class="mdi mdi-email text-primary" title="Not Viewed" {% endif %} id="read-unread-{{repair_request.pk}}" onclick="markUnreadPopUpRepair(event, '{{repair_request.pk}}')"></i>
+                  </td>
+              </tr>
+              {% endfor %}                            
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+            <div class="text-center text-danger text-capitalize">
+                <h5>No repair request</h5>
+            </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- confirm unread box -->
+<div class="position-absolute border shadow shadow-danger px-3 pt-3 bg-light" id="confirm_unread_box" style="display: none; min-width: 360px; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+  <h4 class="text-danger">Marking repair request '<span id="repair-request-object"></span>' as 'Unread'.</h4>
+  <hr/>
+  <h6>Are your sure?</h6>
+  <div class="d-flex justify-content-between mt-4">
+    <button class="btn btn-info text-light" href="#" id="confirm-unread-btn" onclick="markUnreadRepair(this.value)" style="width: 75px;">Yes</button>
+    <button type="button" class="btn btn-primary text-light" onclick="document.getElementById('confirm_unread_box').style.display='none'" data-dismiss="modal" style="width: 75px;">Cancel</button>
+  </div>
+</div>
+
+{% endblock content %}

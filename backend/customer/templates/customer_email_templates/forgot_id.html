@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warranty Application Accepted</title>
+</head>
+
+<body style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
+
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+
+        <h1 id="main-heading" style="text-align: center;"><span id="heading-span" style="color: rgb(55, 127, 252);">IPCS</span> Support</h1>
+        <hr>
+        
+        {% if application %}
+
+        <p>{{email_content}}</p> <br>        
+        
+        {% if warranty_applications %}
+        <h3 style="color: #333333; text-decoration: 1px solid black underline;">Warranty Applications:</h3>
+        {% for warranty_application in warranty_applications %}
+        <p><strong>Warranty ID:</strong> {{ warranty_application.id }}</p>
+        <p><strong>Product:</strong> {{ warranty_application.product }}</p>
+        <p><strong>Serial Number:</strong> {{ warranty_application.serial_number }}</p> <br>
+        {% endfor %}
+        <hr>
+        <br>
+        {% endif %}
+
+        {% if finished_warranties %}
+        <h3 style="color: #333333; text-decoration: 1px solid black underline;">Finished Warranty Applications:</h3>
+        {% for finished_warranty in finished_warranties %}
+        <p><strong>Warranty ID:</strong> {{ finished_warranty.id }}</p>
+        <p><strong>Product:</strong> {{ finished_warranty.product }}</p>
+        <p><strong>Serial Number:</strong> {{ finished_warranty.serial_number }}</p> <br>
+        {% endfor %}
+        <hr>
+        <br>
+        {% endif %}
+
+        {% if rejected_warranties %}
+        <h3 style="color: #333333; text-decoration: 1px solid black underline;">Rejected Warranty Applications:</h3>
+        {% for rejected_warranty in rejected_warranties %}
+        <p><strong>Warranty ID:</strong> {{ rejected_warranty.id }}</p>
+        <p><strong>Product:</strong> {{ rejected_warranty.product }}</p>
+        <p><strong>Serial Number:</strong> {{ rejected_warranty.serial_number }}</p> <br>
+        {% endfor %}
+        <hr>
+        <br>
+        {% endif %}
+
+        {% if service_requests %}
+        <h3 style="color: #333333; text-decoration: 1px solid black underline;">Service Applications:</h3>
+        {% for service_request in service_requests %}
+        <p><strong>Service ID:</strong> {{ service_request.id }}</p>
+        <p><strong>Product:</strong> {{ service_request.product }}</p>
+        <p><strong>Serial Number:</strong> {{ service_request.serial_number }}</p> <br>
+        {% endfor %}
+        <hr>
+        <br>
+        {% endif %}
+
+        {% if accepted_services %}
+        <h3 style="color: #333333; text-decoration: 1px solid black underline;">Accepted Service Applications:</h3>
+        {% for accepted_service in accepted_services %}
+        <p><strong>Service ID:</strong> {{ accepted_service.id }}</p>
+        <p><strong>Product:</strong> {{ accepted_service.product }}</p>
+        <p><strong>Serial Number:</strong> {{ accepted_service.serial_number }}</p> <br>
+        {% endfor %}
+        <hr>
+        <br>
+        {% endif %}
+
+        {% if completed_services %}
+        <h3 style="color: #333333; text-decoration: 1px solid black underline;">Completed Service Applications:</h3>
+        {% for completed_service in completed_services %}
+        <p><strong>Service ID:</strong> {{ completed_service.id }}</p>
+        <p><strong>Product:</strong> {{ completed_service.product }}</p>
+        <p><strong>Serial Number:</strong> {{ completed_service.serial_number }}</p> <br>
+        {% endfor %}
+        <hr>
+        <br>
+        {% endif %}
+
+        {% if repair_requests %}
+        <h3 style="color: #333333; text-decoration: 1px solid black underline;">Repair Applications:</h3>
+        {% for repair_request in repair_requests %}
+        <p><strong>Repair ID:</strong> {{ repair_request.id }}</p>
+        <p><strong>Product:</strong> {{ repair_request.product }}</p>
+        <p><strong>Serial Number:</strong> {{ repair_request.serial_number }}</p> <br>
+        {% endfor %}
+        <hr>
+        <br>
+        {% endif %}
+
+        {% if started_repairs %}
+        <h3 style="color: #333333; text-decoration: 1px solid black underline;">Started Repair Applications:</h3>
+        {% for started_repair in started_repairs %}
+        <p><strong>Repair ID:</strong> {{ started_repair.id }}</p>
+        <p><strong>Product:</strong> {{ started_repair.product }}</p>
+        <p><strong>Serial Number:</strong> {{ started_repair.serial_number }}</p> <br>
+        {% endfor %}
+        <hr>
+        <br>
+        {% endif %}
+
+        {% if completed_repairs %}
+        <h3 style="color: #333333; text-decoration: 1px solid black underline;">Completed Repair Applications:</h3>
+        {% for completed_repair in completed_repairs %}
+        <p><strong>Repair ID:</strong> {{ completed_repair.id }}</p>
+        <p><strong>Product:</strong> {{ completed_repair.product }}</p>
+        <p><strong>Serial Number:</strong> {{ completed_repair.serial_number }}</p> <br>
+        {% endfor %}
+        <hr>
+        <br>
+        {% endif %}
+
+        {% if repairs_ready_to_dispatch %}
+        <h3 style="color: #333333; text-decoration: 1px solid black underline;">Completed Repair Applications:</h3>
+        {% for repair_ready_to_dispatch in repairs_ready_to_dispatch %}
+        <p><strong>Repair ID:</strong> {{ repair_ready_to_dispatch.id }}</p>
+        <p><strong>Product:</strong> {{ repair_ready_to_dispatch.product }}</p>
+        <p><strong>Serial Number:</strong> {{ repair_ready_to_dispatch.serial_number }}</p> <br>
+        {% endfor %}
+        <hr>
+        {% endif %}
+
+        {% else %}
+
+        <p>No applications with the given registered number were found.</p> <br>
+
+        {% endif %}
+
+        <p>Thank you for choosing our service. If you have any further questions or concerns, feel free to contact us.</p>
+
+        <p>Best regards,<br>IPCS Support.</p>
+
+    </div>
+
+</body>
+
+</html>

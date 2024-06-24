@@ -1,0 +1,124 @@
+{% extends "customer_base.html" %}
+{% block page-heading %}
+<li class="nav-item">
+  <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="{% url 'service_history' %}" role="tab" aria-controls="overview" aria-selected="true">Service History</a>
+</li>
+{% endblock page-heading %}
+{% block content %}
+<!-- Messages -->
+<div id="message-div">
+  {% if messages %}
+      <ul class="messages">
+          {% for message in messages %}
+              <p {% if message.tags %} class="{{message.tags}}" {% endif %}>{{message}}</p>
+          {% endfor %}
+      </ul>
+  {% endif %}
+</div>
+<!-- Table -->
+<div class="col-lg-12 grid-margin stretch-card px-2">
+  <div class="card">
+    <div class="card-body">
+        {% if not service_ready_to_dispatches and not completed_services and not accepted_services and not service_requests %}
+        <div class="text-center text-danger text-uppercase">
+            <h5>No Service History</h5>
+        </div>
+        {% endif %}
+        <!-- Service Request -->
+        {% if service_requests %}
+        <div class="table-responsive">
+          <table class="table">
+              <thead>
+                  <tr class="text-uppercase text-primary">
+                      <th colspan="4">Service Requests</th>
+                  </tr>
+                  <tr>
+                      <th>Service ID</th>
+                      <th class="text-center">Requested Date</th>
+                      <th class="text-center">Product</th>
+                      <th class="text-center">Serial Number</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for service_request in service_requests %}
+                  <tr>
+                    <td>{{service_request.id}}</td>
+                    <td class="text-center">{{service_request.application_datetime.date}}</td>
+                    <td class="text-center">{{service_request.product}}</td>
+                    <td class="text-center">{{service_request.serial_number}}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+        </div>
+        {% endif %}
+        <!-- End Service Request -->
+
+        <!-- Accepted Service -->
+        {% if accepted_services %}
+        <div class="table-responsive">
+          <table class="table">
+              <thead>
+                  <tr class="text-uppercase text-primary">
+                      <th colspan="4">Accepted Services</th>
+                  </tr>
+                  <tr>
+                      <th>Service ID</th>
+                      <th class="text-center">Requested Date</th>
+                      <th class="text-center">Accepted Date</th>
+                      <th class="text-center">Product</th>
+                      <th class="text-center">Serial Number</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for accepted_service in accepted_services %}
+                  <tr>
+                      <td>{{accepted_service.id}}</td>
+                      <td class="text-center">{{accepted_service.application_datetime.date}}</td>
+                      <td class="text-center">{{accepted_service.accepted_datetime.date}}</td>
+                      <td class="text-center">{{accepted_service.product}}</td>
+                      <td class="text-center">{{accepted_service.serial_number}}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+        </div>
+        {% endif %}
+        <!-- End Accepted Service -->
+
+        <!-- Completed Service -->
+      {% if completed_services %}
+      <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr class="text-uppercase text-primary">
+                    <th colspan="4">Completed Services</th>
+                </tr>
+                <tr>
+                    <th>Service ID</th>
+                    <th class="text-center">Requested Date</th>
+                    <th class="text-center">Serviced Date</th>
+                    <th class="text-center">Product</th>
+                    <th class="text-center">Serial Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for completed_service in completed_services %}
+                <tr>
+                    <td>{{completed_service.id}}</td>
+                    <td class="text-center">{{completed_service.application_datetime.date}}</td>
+                    <td class="text-center">{{completed_service.completion_datetime.date}}</td>
+                    <td class="text-center">{{completed_service.product}}</td>
+                    <td class="text-center">{{completed_service.serial_number}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+      {% endif %}
+      <!-- End Completed Service -->        
+
+    </div>
+  </div>
+</div>
+{% endblock content %}

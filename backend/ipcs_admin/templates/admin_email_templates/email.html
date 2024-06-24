@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warranty Application Accepted</title>
+</head>
+
+<body style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
+
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+
+        <h1 id="main-heading" style="text-align: center;"><span id="heading-span" style="color: rgb(55, 127, 252);">IPCS</span> Support</h1>
+        <hr>
+
+        <h2 style="color: #333333;">{{email_subject}}</h2>
+        
+        <p>{{email_content}}</p> <br>
+        <!-- <p>Congratulations! Your warranty application has been accepted. Here are the details:</p> <br> -->
+
+        <h3 style="color: #333333;">Product Details:</h3>
+        <p><strong>Application ID:</strong> {{ id }}</p>
+        <p><strong>Product:</strong> {{ product }}</p>
+        <p><strong>Serial Number:</strong> {{ serial_number }}</p>
+        {% if model_number %}
+        <p><strong>Model Number:</strong> {{ model_number }}</p>
+        {% endif %}
+        {% if billing_name %}
+        <p><strong>Billing Name:</strong> {{ billing_name }}</p>
+        {% endif %}
+        {% if invoice_number %}
+        <p><strong>Invoice Number:</strong> {{ invoice_number }}</p>
+        {% endif %}
+        {% if product_complain %}
+        <p><strong>Product Complain:</strong> {{ product_complain }}</p>
+        {% endif %}
+        {% if service_description %}
+        <p><strong>Service Description:</strong> {{ service_description }}</p>
+        {% endif %}
+        {% if item_description %}
+        <p><strong>Item Description:</strong> {{ item_description }}</p>
+        {% endif %}
+        {% if remark %}
+        <p><strong>Remark:</strong> {{ remark }}</p>
+        {% endif %}
+        {% if reason %}
+        <p><strong>Reason:</strong> {{ reason }}</p>
+        {% endif %}
+        {% if file %}
+        <p style="color:red">Please review the file attached with this mail.</p>
+        {% endif %}
+        <br>
+        <!-- Add more product details as needed -->
+
+        <h3 style="color: #333333;">Customer Details:</h3>
+        <p><strong>Name:</strong> {{ customer_name }}</p>
+        <p><strong>Email:</strong> {{ email }}</p>
+        <p><strong>Contact Number:</strong> {{ contact_number }}</p>
+        {% if alternative_number %}
+        <p><strong>Alternative Number:</strong> {{ alternative_number }}</p>
+        {% endif %}        
+        <p><strong>Address:</strong> {{ address }}</p>              
+        <br>
+
+        <!-- Add more customer details as needed -->
+
+        <p>Thank you for choosing our service. If you have any further questions or concerns, feel free to contact us.</p>
+
+        <p>Best regards,<br>IPCS Support.</p>
+
+    </div>
+
+</body>
+
+</html>

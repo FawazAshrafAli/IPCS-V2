@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% block page-heading %}
+<li class="nav-item">
+  <a class="nav-link ps-0" id="home-tab" data-bs-toggle="link" href="{% url 'warranty_applications' %}" role="link" aria-controls="overview" aria-selected="false">Warranty Applications</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="{% url 'warranty_application' application.pk %}" role="tab" aria-controls="overview" aria-selected="true">Details of Warranty Application</a>
+  </li>
+{% endblock page-heading %}
+{% block blue-btn %}
+<div class="d-flex align-items-center">
+    <div class="btn-wrapper d-flex me-0 ">
+        <button class="btn btn-success" id="complete-btn" style="display:none;">Complete</button>
+        <button class="btn btn-danger" id="reject-btn" style="display:none;">Reject</button>
+        <button class="btn btn-info" id="action-toggle-btn" onclick="responsiveEditionDiv()">Action</button>
+    </div>
+    <div>
+        <button class="btn btn-danger" id="delete-btn" title="Delete" data-bs-toggle="modal" data-bs-target="#confirm-deletion-modal">Delete</button>
+    </div>
+</div>
+{% endblock blue-btn %} 
+{% block content %}
+<!-- Messages -->
+<div id="message-div">
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <p {% if message.tags %} class="{{message.tags}}" {% endif %}>{{message}}</p>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+<!-- Table -->
+<div class="row">
+  <div class="col grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Warranty ID: {{application.pk}}</h4>
+        <div class="table-responsive">
+            <table class="table table-sm">            
+                <tr>
+                    <th>Application Date/Time</th>
+                    <td>:</td>
+                    <td>{{application.application_datetime}}</td>
+                </tr>
+                <tr>
+                    <th>Customer Name</th>
+                    <td>:</td>
+                    <td>{{application.customer_name}}</td>
+                </tr>                
+                <tr>
+                    <th>Contact Number</th>
+                    <td>:</td>
+                    <td>{{application.contact_number}}</td>
+                </tr>
+                <tr>
+                    <th>Email ID</th>
+                    <td>:</td>
+                    <td>{{application.email_id}}</td>
+                </tr>
+                <tr>
+                    <th>Alternative Number</th>
+                    <td>:</td>
+                    {% if application.alternative_number %}
+                    <td>{{application.alternative_number}}</td>
+                    {% else %}
+                    <td>None</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <th>Address</th>
+                    <td>:</td>
+                    <td>{{application.address}}</td>
+                </tr>
+                <tr>
+                    <th>Product</th>
+                    <td>:</td>
+                    <td>{{application.product}}</td>
+                </tr>
+                <tr>
+                    <th>Serial Number</th>
+                    <td>:</td>
+                    <td>{{application.serial_number}}</td>
+                </tr>
+                <tr>
+                    <th>Model Number</th>
+                    <td>:</td>
+                    <td>{{application.model_number}}</td>
+                </tr>
+                <tr>
+                    <th>Billing Name</th>
+                    <td>:</td>
+                    <td>{{application.billing_name}}</td>
+                </tr>
+                <tr>
+                    <th>Invoice Number</th>
+                    <td>:</td>
+                    <td>{{application.invoice_number}}</td>
+                </tr>
+                <tr>
+                    <th>Product Complain</th>
+                    <td>:</td>
+                    <td>{{application.product_complain}}</td>
+                </tr>                
+            </table>
+        </div>
+        <br>                
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Rejection Form -->
+<div class="row">
+    <div class="position-absolute border shadow shadow-danger px-3 pt-3 bg-light col-lg-6" id="rejection-form" style= "display: none; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+        <div class="text-end">
+            <button type="button" id="close-rejection-btn" class="btn btn-close"></button>
+        </div>
+        <h4>Rejecting Warranty Claim</h4>
+        <hr/>
+        <div id="rejection-assurance-section">
+            <form id="warranty-rejection-form" name="rejectionReasonForm" action="{% url 'reject_warranty' application.pk %}" method="POST" onsubmit="return warrantyRejectionValidate();">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="reason" class="form-label">Reason (Optional) </label>
+                    <textarea class="form-control" name="reason" id="reason" cols="30" rows="30" placeholder="Reason for rejection (Optional)" style="height: 120px;"></textarea>
+                </div>
+                <div class="form-group text-center">
+                    <button type="button" class="btn btn-primary" onclick="rejectWarrantyAndLoadAnimation();">Reject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Completion Form -->
+<div class="row">
+    <div class="position-absolute border shadow shadow-danger px-3 pt-3 bg-light col-lg-6" id="completion-form" style= "display: none; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+        <div class="text-end">
+            <button type="button" id="close-completion-btn" class="btn btn-close"></button>     
+        </div>
+        <h4>Completing Warranty Claim</h4>
+        <hr/>
+        <div id="completion-assurance-section">
+            <form id="warranty-completion-form" action="{% url 'complete_warranty' application.pk %}" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="remark" class="form-label">Remark (optional)</label>
+                    <textarea class="form-control" name="remark" id="remark" cols="30" rows="30" placeholder="Remark (optional)" style="height: 120px;"></textarea>
+                </div>
+                <div class="form-group text-center">
+                    <button type="button" class="btn btn-primary" onclick="completeWarrantyAndLoadAnimation();">Finish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="confirm-deletion-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 text-start" id="exampleModalLabel"><span class="text-danger">Deleting</span> Warranty Application '<span class="deleting-warranty-application">{{application.id}} ({{application.customer_name}})</span>'...</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h4>Are you sure?</h4>
+        </div>
+        <div class="modal-footer d-flex justify-content-between align-items-center">
+            <a href="{% url 'hard_delete_warranty_application' application.pk %}" class="btn btn-danger" style="width: 75px;">Confirm</a>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="width: 75px;">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+    var rejectBtn = document.getElementById('reject-btn')
+    var completeBtn = document.getElementById('complete-btn')
+    var closeRejectionBtn = document.getElementById('close-rejection-btn')
+    var closeCompletionnBtn = document.getElementById('close-completion-btn')
+
+    rejectBtn.addEventListener("click", function(){
+        document.getElementById('rejection-form').style.display='block';
+        document.getElementById('completion-form').style.display='none';
+    });
+
+    completeBtn.addEventListener("click", function(){
+        document.getElementById('completion-form').style.display='block';
+        document.getElementById('rejection-form').style.display='none';
+    });
+    
+    closeRejectionBtn.addEventListener("click", function(){
+        document.getElementById('rejection-form').style.display='none';
+    });
+    
+    closeCompletionnBtn.addEventListener("click", function(){        
+        document.getElementById('completion-form').style.display='none';        
+    });
+    
+</script>
+<script>
+    function responsiveEditionDiv() {
+        var completeBtnDisplay = document.getElementById('complete-btn').style.display
+        var rejectBtnDisplay = document.getElementById('reject-btn').style.display
+        if (completeBtnDisplay == 'none' && rejectBtnDisplay == 'none'){
+            document.getElementById('complete-btn').style.display='block';
+            document.getElementById('reject-btn').style.display='block';
+            document.getElementById('action-toggle-btn').innerHTML='Cancel';
+            document.getElementById('action-toggle-btn').className+='btn btn-light';
+        } else {
+            document.getElementById('complete-btn').style.display='none';
+            document.getElementById('reject-btn').style.display='none';
+            document.getElementById('action-toggle-btn').innerHTML='Action';
+            document.getElementById('action-toggle-btn').className+='btn btn-info';
+        }
+  
+    }
+</script>
+{% endblock content %}

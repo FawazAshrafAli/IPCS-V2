@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% block page-heading %}
+<li class="nav-item">
+  <a class="nav-link ps-0" id="home-tab" data-bs-toggle="link" href="{% url 'completed_services' %}" role="link" aria-controls="overview" aria-selected="false">Completed Services</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="{% url 'completed_service' completed_service.pk %}" role="tab" aria-controls="overview" aria-selected="true">Completed Service</a>
+</li>
+{% endblock page-heading %}
+{% block blue-btn %}
+<div class="d-flex">
+  <div class="btn-wrapper d-flex me-0 ">
+    <button type="button" class="btn btn-info" id="reverse-btn">Move Back to Accepted</button>  
+  </div>
+  <div>
+    <button class="btn btn-danger" id="delete-btn" title="Delete" data-bs-toggle="modal" data-bs-target="#confirm-deletion-modal">Delete</button>
+  </div>
+</div>
+{% endblock blue-btn %}
+{% block content %}
+<!-- Messages -->
+<div id="message-div">
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <p {% if message.tags %} class="{{message.tags}}" {% endif %}>{{message}}</p>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+<!-- Table -->
+<div class="row">
+  <div class="col grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Service ID: {{completed_service.pk}}</h4>
+        <div class="table-responsive">
+          <table class="table table-sm">              
+            <tr>
+              <th>Application Date/Time</th>
+              <td>:</td>
+              <td>{{completed_service.application_datetime}}</td>
+            </tr>
+            <tr>
+              <th>Started Date/Time</th>
+              <td>:</td>
+              <td>{{completed_service.accepted_datetime}}</td>
+            </tr>
+            <tr>
+              <th>Completion Date/Time</th>
+              <td>:</td>
+              <td>{{completed_service.completion_datetime}}</td>
+            </tr>
+            <tr>
+                <th>Customer Name</th>
+                <td>:</td>
+                <td>{{completed_service.customer_name}}</td>
+            </tr>                
+            <tr>
+                <th>Email ID</th>
+                <td>:</td>
+                <td>{{completed_service.email}}</td>
+            </tr>
+            <tr>
+                <th>Contact Number</th>
+                <td>:</td>
+                <td>{{completed_service.contact_number}}</td>
+            </tr>
+            <tr>
+                <th>Alternative Number</th>
+                <td>:</td>
+                {% if completed_service.alternative_number %}
+                <td>{{completed_service.alternative_number}}</td>
+                {% else %}
+                <td>None</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <th>Item Name</th>
+                <td>:</td>
+                <td>{{completed_service.product}}</td>
+            </tr>                                
+            <tr>
+                <th>Serial Number</th>
+                <td>:</td>
+                <td>{{completed_service.serial_number}}</td>
+            </tr>
+            <tr>
+              <th>Model Number</th>
+              <td>:</td>
+              <td>{{completed_service.model_number}}</td>
+          </tr>
+            <tr>
+                <th>Address of Customer</th>
+                <td>:</td>
+                <td>{{completed_service.address_site}}</td>
+            </tr> 
+            <tr>
+              <th>Item Description</th>
+              <td>:</td>
+              <td>{{completed_service.service_description}}</td>
+          </tr>
+          <tr>
+            <th>Remark&nbsp;&nbsp;<a class="btn p-0" href="#remark_update" id="remark_toggle_btn" title="Update Remark"><i class="mdi mdi-lead-pencil" style="width: 20px;"></i></a></th>
+            <td>:</td>
+            <td>
+                {% if completed_service.remark %}
+                {{completed_service.remark}}
+                {% else %}
+                None
+                {% endif %}
+            </td>
+          </tr>  
+          <tr>
+            <th>File&nbsp;&nbsp;<a href="#file_update" class="btn p-0" id="file_form_toggle_btn" title="Update File"><i class="mdi mdi-lead-pencil" style="width: 20px;"></i></a></th>
+            <td>:</td>
+            <td>
+                {% if completed_service.file %}
+                <a href="{{completed_service.file.url}}" target="_blank">{{completed_service.file}}</a>                
+                {% else %}
+                None
+                {% endif %}            
+              </td>
+          </tr>  
+          </table>
+        </div>
+        <!-- remark update form -->
+        <form class="form" method="POST" id="remark_update" style="display:none">
+          {% csrf_token %}
+          <div class="form-group d-flex flex-column">
+              <label for="remark">Remark</label>
+              <textarea name="remark" id="remark" cols="30" rows="10" required>{% if completed_service.remark %}{{completed_service.remark}}{% endif %}</textarea>
+          </div>
+          <div id="remark-assurance-section">
+            <div class="text-center">
+                <button class="btn btn-success" type="button" style="width:120px" id="remark-submit-btn" onclick="updateRemarkAndLoadAnimation()">Update Remark</button>
+                <button type="button" class="btn btn-primary" id="cancel_remark_btn" style="width:120px">Cancel</button>
+            </div>
+          </div>
+        </form>
+        <!-- update File Form -->
+        <form name="completedServiceFileUpdationForm" action="{% url 'complete_service_file_update' completed_service.pk %}" method="POST" enctype="multipart/form-data" id="file_update" style="display:none" onsubmit="return completedServiceFileUpdateValidate()">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="file" class="form-label">File* <span class="required-span" id="file-span"></span></label>
+            <input type="file" name="file" class="form-control" id="file">
+          </div>
+          <div id="file-assurance-section">
+            <div class="d-flex justify-content-between mt-4">
+              <button class="btn btn-success" type="submit">Update File</button>
+              <button type="button" class="btn btn-primary text-light" id="cancel_file_btn" style="width: 75px;">Cancel</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- confirm deletion box -->
+<div class="position-absolute border shadow shadow-danger px-3 pt-3 bg-light" id="confirm_deletion" style="display: none; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+  <h4 class="text-danger">Moving completed service back to service request..</h4>
+  <hr/>
+  <div id="assurance-section">
+    <h6>Are your sure?</h6>
+    <div class="d-flex justify-content-between mt-4">
+      <a class="btn btn-info text-light" href="{% url 'delete_completed_service' completed_service.pk %}" style="width: 75px;" onclick="loadingAnimation()">Move</a>
+      <button type="button" class="btn btn-primary text-light" id="cancel_deletion_btn" data-dismiss="modal" style="width: 75px;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="confirm-deletion-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5 text-start" id="exampleModalLabel"><span class="text-danger">Deleting </span>Completed Service Request '{{completed_service.id}} ({{completed_service.customer_name}})'. . .</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h4>Are you sure?</h4>
+      </div>
+      <div class="modal-footer d-flex justify-content-between align-items-center">
+          <a href="{% url 'hard_delete_completed_service' completed_service.pk %}" class="btn btn-danger" style="width: 75px;">Confirm</a>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="width: 75px;">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // reversing
+  var reverseBtn = document.getElementById('reverse-btn');
+
+  reverseBtn.addEventListener('click', function(){
+    document.getElementById('confirm_deletion').style.display = "block"
+    document.getElementById('remark_update').style.display = "none";
+    document.getElementById('file_update').style.display="none";
+  })
+
+
+  // update remark visibility function
+  var remarkToggleBtn = document.getElementById('remark_toggle_btn');
+    
+  remarkToggleBtn.addEventListener("click", function(){
+    document.getElementById('remark_update').style.display = "block";
+    document.getElementById('confirm_deletion').style.display = "none"
+    document.getElementById('file_update').style.display="none";
+  });
+
+  // update file
+  var fileFormToggleBtn = document.getElementById('file_form_toggle_btn');
+
+  fileFormToggleBtn.addEventListener( "click", function(){    
+    document.getElementById('file_update').style.display="block";
+    document.getElementById('confirm_deletion').style.display = "none"
+    document.getElementById('remark_update').style.display = "none";
+  });
+
+  // cancel btn
+  var cancelDeletionBtn = document.getElementById('cancel_deletion_btn');
+  var cancelRemarkBtn = document.getElementById('cancel_remark_btn');
+  var cancelFileBtn = document.getElementById('cancel_file_btn');
+
+  cancelDeletionBtn.addEventListener("click", function(){
+    document.getElementById('confirm_deletion').style.display = "none";
+  });
+  cancelRemarkBtn.addEventListener("click", function(){
+    document.getElementById('remark_update').style.display = "none";
+  });
+  cancelFileBtn.addEventListener("click", function(){
+    document.getElementById('file_update').style.display = "none";
+  });
+
+  // cancel btn end
+
+
+    // // action div
+    // function responsiveEditionDiv() {
+    //     var reverseBtn = document.getElementById('reverse-btn').style.display
+    //     // var remarkToggleBtn = document.getElementById('remark_toggle_btn').style.display
+
+    //     if (reverseBtn == 'none' && remarkToggleBtn == 'none'){
+    //         // document.getElementById('reverse-btn').style.display='block';
+    //         // document.getElementById('remark_toggle_btn').style.display='block';
+    //         document.getElementById('action-toggle-btn').innerHTML='Cancel';
+    //         document.getElementById('action-toggle-btn').className+='btn btn-light';
+    //     } else {
+    //         document.getElementById('reverse-btn').style.display='none';
+    //         // document.getElementById('remark_toggle_btn').style.display='none';
+    //         document.getElementById('action-toggle-btn').innerHTML='Edit';
+    //         document.getElementById('action-toggle-btn').className+='btn btn-primary text-light';
+    //     }
+  
+    // }
+</script>
+{% endblock content %}

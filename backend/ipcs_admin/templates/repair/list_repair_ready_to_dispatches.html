@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block page-heading %}
+<li class="nav-item">
+  <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="{% url 'repairs_ready_to_dispatch' %}" role="tab" aria-controls="overview" aria-selected="true">Repairs Ready to Dispatch</a>
+</li>
+{% endblock page-heading %}
+{% block content %}
+<!-- Table -->
+<div class="row px-2">
+  <div class="col grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <!-- Messages -->
+        <div id="message-div">
+          {% if messages %}
+              <ul class="messages">
+                  {% for message in messages %}
+                      <p {% if message.tags %} class="{{message.tags}}" {% endif %}>{{message}}</p>
+                  {% endfor %}
+              </ul>
+          {% endif %}
+        </div>
+        
+        {% if dispatch_ready_items %}
+        <div class="d-flex justify-content-between align-items-center">
+          <h4 class="card-title">Repairs Ready to Dispatch</h4>
+          <div class="dropdown">
+            <button class="btn btn-light btn-sm p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="mdi mdi-dots-vertical p-0 m-0"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item p-0 text-center" href="{% url 'repairs_ready_to_dispatch_to_excel' %}" style="font-size:12px">Export To Excel</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Repair ID</th>
+                <th>Customer</th>
+                <th>Application Date/Time</th>
+                <th>Ready to Dispatch Date/Time</th>
+                <th>Item</th>
+                <th>Serial</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for dispatch_ready_item in dispatch_ready_items %}
+              <tr id="link-table" onclick="window.location='{% url 'repair_ready_to_dispatch' dispatch_ready_item.pk %}'">
+                <td>{{forloop.counter}}</td>
+                <td>{{dispatch_ready_item.id}}</td>
+                <td>{{dispatch_ready_item.customer_name}}</td>
+                <td>{{dispatch_ready_item.application_datetime}}</td>
+                <td>{{dispatch_ready_item.dispatch_ready_datetime}}</td>
+                <td>{{dispatch_ready_item.product}}</td>
+                <td>{{dispatch_ready_item.serial_number}}</td>
+              </tr>
+              {% endfor %}                            
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+            <div class="text-center text-danger text-uppercase">
+                <h5>No Repair Ready to Dispatch</h5>
+            </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
